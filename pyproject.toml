@@ -1,0 +1,30 @@
+[project]
+name = "nim-bit-code"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "nimith"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv (>=1.2.4,<2.0.0)",
+    "openai (>=3.23.0,<4.0.0)",
+    "chromadb (>=1.5.9,<2.0.0)",
+    "rich (>=15.0.0,<16.0.0)",
+    "pydantic (>=2.13.5,<3.0.0)",
+    "langchain (>=1.4.3,<2.0.0) ; python_version >= \"3.12\" and python_full_version < \"4.0.0\"",
+    "langchain-openai (>=1.6.7,<2.0.0) ; python_version >= \"3.12\" and python_full_version < \"4.0.0\"",
+    "langchain-anthropic (>=1.7.5,<2.0.0) ; python_version >= \"3.12\" and python_full_version < \"4.0.0\"",
+    "langchain-huggingface (>=1.2.2,<2.0.0) ; python_version >= \"3.12\" and python_full_version < \"4.0.0\""
+]
+
+[project.scripts]
+nim-bit-code = "main:run"
+
+[tool.poetry]
+packages = [{include = "observability"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
