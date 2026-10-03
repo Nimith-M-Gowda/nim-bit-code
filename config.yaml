@@ -14,3 +14,9 @@ elasticsearch:
 llm:
   provider: anthropic # openai | anthropic
   model: claude-haiku-4-5-20251001
+
+vector_store:
+  provider: qdrant
+
+qdrant:
+  collection_name: codebase
