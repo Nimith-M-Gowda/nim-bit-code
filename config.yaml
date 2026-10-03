@@ -1,10 +1,11 @@
 embeddings:
-  provider: openai
+  provider: openai # openai | anthropic
   model: text-embedding-3-small
 
 chromadb:
   persist_dir: .chromadb/
   collection_name: codebase
+  apikey: $CHROMA_API_KEY
 
 elasticsearch:
   url: http://localhost:9200
@@ -12,4 +13,4 @@ elasticsearch:
 
 llm:
   provider: anthropic # openai | anthropic
-  model: claude-2
+  model: claude-haiku-4-5-20251001
