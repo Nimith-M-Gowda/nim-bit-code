@@ -15,8 +15,12 @@ llm:
   provider: anthropic # openai | anthropic
   model: claude-haiku-4-5-20251001
 
+rag:
+  mode: hybrid # semantic | hybrid
+
 vector_store:
   provider: qdrant
+  retrieval_mode: hybrid # dense | sparse | hybrid
 
 qdrant:
-  collection_name: codebase
+  collection_name: codebase-hybrid

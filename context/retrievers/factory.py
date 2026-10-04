@@ -5,13 +5,16 @@ from observability.logger import get_logger
 logger = get_logger(__name__)
 
 
+
+
 def get_retriever():
-   """Return the right retrieve function based on vector_store in config."""
-   vector_store = config["vector_store"]["provider"]
-   logger.info(f"Using vector store for retrieval: {vector_store}")
+   mode = config["rag"]["mode"]
+   provider = config["vector_store"]["provider"]
 
 
-   if vector_store == "qdrant":
+   if mode == "hybrid" and provider == "qdrant":
+       from .hybrid_qdrant import retrieve
+   elif provider == "qdrant":
        from .semantic_qdrant import retrieve
    else:
        from .semantic_chroma import retrieve
