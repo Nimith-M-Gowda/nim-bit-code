@@ -12,6 +12,8 @@ from observability.logger import get_logger
 
 logger = get_logger(__name__)
 
+QDRANT_TIMEOUT_SECONDS = 120
+
 
 RETRIEVAL_MODE_MAP = {
    "dense": RetrievalMode.DENSE,
@@ -43,7 +45,7 @@ def index_codebase(repo_path: str) -> QdrantVectorStore:
 
 
    # Check if collection already has data
-   client = QdrantClient(url=url, api_key=api_key)
+   client = QdrantClient(url=url, api_key=api_key, timeout=QDRANT_TIMEOUT_SECONDS)
    existing = [c.name for c in client.get_collections().collections]
    if collection_name in existing:
        info = client.get_collection(collection_name)
@@ -56,6 +58,7 @@ def index_codebase(repo_path: str) -> QdrantVectorStore:
                url=url,
                api_key=api_key,
                collection_name=collection_name,
+               timeout=QDRANT_TIMEOUT_SECONDS,
            )
 
 
@@ -93,6 +96,7 @@ def index_codebase(repo_path: str) -> QdrantVectorStore:
        url=url,
        api_key=api_key,
        collection_name=collection_name,
+       timeout=QDRANT_TIMEOUT_SECONDS,
        batch_size=50,
    )
 

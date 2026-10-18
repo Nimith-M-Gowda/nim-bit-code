@@ -9,6 +9,8 @@ from observability.logger import get_logger
 
 logger = get_logger(__name__)
 
+QDRANT_TIMEOUT_SECONDS = 120
+
 
 RETRIEVAL_MODE_MAP = {
    "dense": RetrievalMode.DENSE,
@@ -34,6 +36,7 @@ def retrieve(query: str, k: int = 5) -> list[dict]:
        url=os.getenv("QDRANT_URL"),
        api_key=os.getenv("QDRANT_API_KEY"),
        collection_name=collection_name,
+       timeout=QDRANT_TIMEOUT_SECONDS,
    )
 
 
