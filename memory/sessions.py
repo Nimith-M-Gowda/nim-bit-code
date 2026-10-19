@@ -28,7 +28,7 @@ def new_session() -> str:
    """Create and persist a fresh ID to start an independent conversation session."""
    session_id = str(uuid.uuid4())
    session_file = _session_file()
-   session_file.parent.mkdir(exist_ok=True)
+   session_file.parent.mkdir(parents=True, exist_ok=True)
    session_file.write_text(session_id)
    logger.info(f"Started new session: {session_id}")
    return session_id

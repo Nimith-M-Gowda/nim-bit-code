@@ -1,5 +1,5 @@
 embeddings:
-  provider: openai # openai | anthropic
+  provider: openai # openai | huggingface
   model: text-embedding-3-small
 
 chromadb:

@@ -5,15 +5,14 @@
 # Vector store data
 .chromadb/
 
+# Conversation memory
+.memory/
+
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
-
-
-# Poetry
-poetry.lock
 
 
 # Virtual environments

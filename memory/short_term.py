@@ -2,6 +2,7 @@ import sqlite3
 
 from langgraph.checkpoint.sqlite import SqliteSaver
 from langchain.agents.middleware import SummarizationMiddleware
+from langchain_core.language_models import BaseChatModel
 from pathlib import Path
 
 
@@ -39,10 +40,12 @@ def get_session_history(thread_id: str) -> list[dict[str, str]]:
    ]
 
 
-def get_summarization_middleware() -> SummarizationMiddleware:
+def get_summarization_middleware(
+   model: BaseChatModel | None = None,
+) -> SummarizationMiddleware:
    """Create middleware that summarizes long histories and retains recent messages."""
    return SummarizationMiddleware(
-       model=get_llm(),
+       model=model or get_llm(),
        trigger=("tokens", config["memory"]["summarize_at_tokens"]),
        keep=("messages", config["memory"]["keep_last_messages"]),
    )

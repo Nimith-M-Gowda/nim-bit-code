@@ -26,7 +26,11 @@ RETRIEVAL_MODE_MAP = {
 
 def _get_retrieval_mode() -> RetrievalMode:
    mode = config["vector_store"].get("retrieval_mode", "hybrid")
-   return RETRIEVAL_MODE_MAP.get(mode, RetrievalMode.HYBRID)
+   try:
+       return RETRIEVAL_MODE_MAP[mode]
+   except KeyError as exc:
+       allowed = ", ".join(RETRIEVAL_MODE_MAP)
+       raise ValueError(f"Unsupported Qdrant retrieval mode: {mode}. Choose from: {allowed}") from exc
 
 
 
@@ -110,16 +114,27 @@ def show_index(vector_store: QdrantVectorStore) -> None:
    console = Console()
    client = vector_store.client
    collection_name = config["qdrant"]["collection_name"]
-   results = client.scroll(collection_name=collection_name, with_payload=True, with_vectors=False, limit=1000)
-   points = results[0]
-   console.print(f"\n[bold]Hybrid Index — {len(points)} chunks[/bold]\n")
+   total = client.count(collection_name=collection_name).count
+   console.print(f"\n[bold]Hybrid Index — {total} chunks[/bold]\n")
+   offset = None
+   index = 0
 
-
-   for i, point in enumerate(points):
-       content = point.payload.get("page_content", "")
-       meta = point.payload.get("metadata", {})
-       console.print(f"[bold cyan]── Chunk {i+1} ──────────────────────────[/bold cyan]")
-       console.print(f"  File     : {meta.get('source', 'unknown')}")
-       console.print(f"  Name     : {meta.get('name', 'unknown')} ({meta.get('type', 'unknown')})")
-       console.print(f"  Lines    : {meta.get('start_line')} - {meta.get('end_line')}")
-       console.print(f"  Code     :\n[dim]{content[:300]}[/dim]\n")
+   while True:
+       points, offset = client.scroll(
+           collection_name=collection_name,
+           with_payload=True,
+           with_vectors=False,
+           limit=1000,
+           offset=offset,
+       )
+       for point in points:
+           index += 1
+           content = point.payload.get("page_content", "")
+           meta = point.payload.get("metadata", {})
+           console.print(f"[bold cyan]── Chunk {index} ──────────────────────────[/bold cyan]")
+           console.print(f"  File     : {meta.get('source', 'unknown')}")
+           console.print(f"  Name     : {meta.get('name', 'unknown')} ({meta.get('type', 'unknown')})")
+           console.print(f"  Lines    : {meta.get('start_line')} - {meta.get('end_line')}")
+           console.print(f"  Code     :\n[dim]{content[:300]}[/dim]\n")
+       if offset is None:
+           break

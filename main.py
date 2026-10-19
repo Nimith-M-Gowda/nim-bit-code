@@ -6,7 +6,6 @@ from rich.prompt import Prompt
 
 from config import config
 from context.indexers.factory import get_indexer, get_index_inspector
-from llm.factory import get_llm, get_embedder
 from agent.orchestrator import handle_query
 from memory.sessions import get_current_session, new_session, switch_session
 from observability.logger import get_logger
@@ -29,9 +28,7 @@ def get_or_create_index():
 
 
 def initialize():
-   """Bootstrap the LLM, embedder, index, and active session before the REPL starts."""
-   llm = get_llm()
-   embedder = get_embedder()
+   """Load the code index and active session before the REPL starts."""
    console.print(f"[dim]LLM: {config['llm']['provider']} / {config['llm']['model']}[/dim]")
    console.print(f"[dim]Embedder: {config['embeddings']['provider']} / {config['embeddings']['model']}[/dim]")
 
@@ -40,7 +37,7 @@ def initialize():
    session_id = get_current_session()
    console.print(f"[dim]Session: {session_id}[/dim]")
    console.print(f"[green]✓ Ready[/green]\n")
-   return llm, embedder, index, session_id
+   return index, session_id
 
 
 def run():
@@ -49,7 +46,7 @@ def run():
    console.print("\n[bold blue]nim-bit-code[/bold blue] — RAG-powered code assistant")
 
 
-   _, _, index, session_id = initialize()
+   index, session_id = initialize()
    console.print("Type [bold]'/exit'[/bold] to quit\n")
 
 

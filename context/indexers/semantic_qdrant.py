@@ -98,17 +98,29 @@ def show_index(vector_store: QdrantVectorStore) -> None:
    console = Console()
    client = vector_store.client
    collection_name = config["qdrant"]["collection_name"]
-   results = client.scroll(collection_name=collection_name, with_payload=True, with_vectors=True, limit=1000)
-   points = results[0]
-   console.print(f"\n[bold]Semantic Index — {len(points)} chunks[/bold]\n")
+   total = client.count(collection_name=collection_name).count
+   console.print(f"\n[bold]Semantic Index — {total} chunks[/bold]\n")
+   offset = None
+   index = 0
 
-
-   for i, point in enumerate(points):
-       payload = point.payload
-       emb = point.vector
-       console.print(f"[bold cyan]── Chunk {i+1} ──────────────────────────[/bold cyan]")
-       console.print(f"  File     : {payload['source']}")
-       console.print(f"  Name     : {payload['name']} ({payload['type']})")
-       console.print(f"  Lines    : {payload['start_line']} - {payload['end_line']}")
-       console.print(f"  Embedding: [{', '.join(f'{v:.4f}' for v in emb[:5])}...] ({len(emb)} dims)")
-       console.print(f"  Code     :\n[dim]{payload.get('page_content', '')[:300]}[/dim]\n")
+   while True:
+       points, offset = client.scroll(
+           collection_name=collection_name,
+           with_payload=True,
+           with_vectors=True,
+           limit=1000,
+           offset=offset,
+       )
+       for point in points:
+           index += 1
+           payload = point.payload
+           meta = payload.get("metadata", payload)
+           emb = point.vector
+           console.print(f"[bold cyan]── Chunk {index} ──────────────────────────[/bold cyan]")
+           console.print(f"  File     : {meta['source']}")
+           console.print(f"  Name     : {meta['name']} ({meta['type']})")
+           console.print(f"  Lines    : {meta['start_line']} - {meta['end_line']}")
+           console.print(f"  Embedding: [{', '.join(f'{v:.4f}' for v in emb[:5])}...] ({len(emb)} dims)")
+           console.print(f"  Code     :\n[dim]{payload.get('page_content', '')[:300]}[/dim]\n")
+       if offset is None:
+           break

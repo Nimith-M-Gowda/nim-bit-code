@@ -42,7 +42,7 @@ def build_agent():
       file_exists,
   ]
   checkpointer = get_checkpointer()
-  middleware = get_summarization_middleware()
+  middleware = get_summarization_middleware(llm)
   logger.info("Creating agent")
   return create_agent(
       llm,
