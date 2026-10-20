@@ -2,7 +2,6 @@ from langchain.agents import create_agent
 
 
 from llm.factory import get_llm
-from agent.tools import search_codebase
 from memory.short_term import get_checkpointer, get_summarization_middleware
 from observability.logger import get_logger
 from tools.filesystem_tools import (
@@ -14,6 +13,7 @@ from tools.filesystem_tools import (
     write_file,
 )
 from tools.terminal_tools import run_command, run_in_directory
+from tools.search_tools import search_codebase
 
 
 logger = get_logger(__name__)
