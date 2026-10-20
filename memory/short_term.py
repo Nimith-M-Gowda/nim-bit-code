@@ -1,9 +1,9 @@
-import sqlite3
+from contextlib import AbstractAsyncContextManager
+from pathlib import Path
 
-from langgraph.checkpoint.sqlite import SqliteSaver
 from langchain.agents.middleware import SummarizationMiddleware
 from langchain_core.language_models import BaseChatModel
-from pathlib import Path
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 
 from config import config
@@ -14,19 +14,23 @@ from observability.logger import get_logger
 logger = get_logger(__name__)
 
 
-def get_checkpointer() -> SqliteSaver:
-   """Open the configured SQLite database for persistent agent checkpoints."""
+def get_checkpointer_db_path() -> str:
+   """Create the memory directory and return the configured SQLite database path."""
    db_path = config["memory"]["db_path"]
    Path(db_path).parent.mkdir(parents=True, exist_ok=True)
    logger.info(f"Using SQLite checkpointer at {db_path}")
-   conn = sqlite3.connect(db_path, check_same_thread=False)
-   return SqliteSaver(conn)
+   return db_path
 
 
-def get_session_history(thread_id: str) -> list[dict[str, str]]:
+def get_checkpointer() -> AbstractAsyncContextManager[AsyncSqliteSaver]:
+   """Return a context manager that owns the asynchronous SQLite connection."""
+   return AsyncSqliteSaver.from_conn_string(get_checkpointer_db_path())
+
+
+async def get_session_history(thread_id: str) -> list[dict[str, str]]:
    """Load a session's saved checkpoint messages as user/assistant history."""
-   checkpointer = get_checkpointer()
-   checkpoint = checkpointer.get({"configurable": {"thread_id": thread_id}})
+   async with get_checkpointer() as checkpointer:
+       checkpoint = await checkpointer.aget({"configurable": {"thread_id": thread_id}})
    if checkpoint is None:
        return []
 

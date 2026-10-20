@@ -21,7 +21,8 @@ dependencies = [
     "tree-sitter (==0.21.3)",
     "langchain-qdrant (>=1.1.0,<2.0.0)",
     "fastembed (>=0.8.1,<0.9.0)",
-    "langgraph-checkpoint-sqlite (>=3.1.2,<4.0.0)"
+    "langgraph-checkpoint-sqlite (>=3.1.2,<4.0.0)",
+    "langchain-mcp-adapters (>=0.3.2,<0.4.0)"
 ]
 
 [project.scripts]
@@ -31,6 +32,7 @@ nim-bit-code = "main:run"
 packages = [
     {include = "agent"},
     {include = "context"},
+    {include = "integrations"},
     {include = "llm"},
     {include = "main.py"},
     {include = "memory"},
@@ -40,6 +42,7 @@ packages = [
 ]
 include = [
     {path = "config.yaml", format = ["sdist", "wheel"]},
+    {path = "mcp_servers.json", format = ["sdist", "wheel"]},
 ]
 
 [build-system]
