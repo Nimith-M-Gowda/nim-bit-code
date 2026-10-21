@@ -2,10 +2,11 @@
 .env
 
 
-# Vector store data
-.chromadb/
+# Application-generated data (local indexes, conversation memory, session state)
+.nim-bit-code/
 
-# Conversation memory
+# Legacy generated data locations
+.chromadb/
 .memory/
 
 

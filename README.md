@@ -75,6 +75,12 @@ Edit `config.yaml` to customize:
 - **RAG Mode**: Use `semantic` or `hybrid` search
 - **Memory Settings**: Adjust conversation history limits
 
+Local generated data, including the ChromaDB index and SQLite conversation
+memory, is stored under `.nim-bit-code/` in the workspace directory where the
+application is launched. Legacy `.memory/` and `.chromadb/` folders in that
+workspace are moved into `.nim-bit-code/` automatically when there are no
+conflicting files.
+
 Example configuration:
 
 ```yaml
